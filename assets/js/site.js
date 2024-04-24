@@ -8,40 +8,51 @@ hvis du vil have navnet på din valuta med fra options i dit select tag, så und
 
  */
 
+const apiKey = '0a645492c599b3b71df1cf5a'
+
 const kroneBeløb = document.getElementById('valutaKr');
 const valutaSelector = document.getElementById('valutaSelector');
 const beregnKnap = document.getElementById('beregnKnap');
 const valutaOutput = document.getElementById('valutaOutput');
-
-const euroKurs = 7.46;
-const dollarKurs = 6.98;
-const pundKurs = 8.68
+const outputElement = document.getElementById('outputElement')
 
 let result
+const apiLink = 'https://v6.exchangerate-api.com/v6/' + apiKey + '/latest/DKK'
 
-function valutaBeregner() {
-    let kurs
-    if (!kroneBeløb.value) {
-        alert('Indtast et beløb!')
-    } else if (!valutaSelector.value) {
-        alert('Vælg en valuta!')
-    } else {
+function fetchKurs(currency) {
+    fetch(apiLink, currency)
+        .then(function (resp) {
+            return resp.json()
+        })
+        .then(function (data, currency) {
+            function valutaBeregner() {
 
-        if (valutaSelector.value === 'Euro') {
-            kurs = euroKurs
-        } else if (valutaSelector.value === 'Dollar') {
-            kurs = dollarKurs
-        } else if (valutaSelector.value === 'Pund') {
-            kurs = pundKurs
-        }
+                let kurs
+                if (!kroneBeløb.value) {
+                    alert('Indtast et beløb!')
+                } else if (!valutaSelector.value) {
+                    alert('Vælg en valuta!')
+                }
+
+                if (valutaSelector.value === 'Euro') {
+                    kurs = data.conversion_rates.EUR
+                } else if (valutaSelector.value === 'Dollar') {
+                    kurs = data.conversion_rates.USD
+                } else if (valutaSelector.value === 'Pund') {
+                    kurs = data.conversion_rates.GBP
+                }
 
 
-        result = (kroneBeløb.value / kurs).toFixed(2)
+                result = (kroneBeløb.value * kurs).toFixed(2)
 
-        valutaOutput.value = result + ' ' + valutaSelector.options[valutaSelector.selectedIndex].innerText
-    }
+                valutaOutput.value = result + ' ' + valutaSelector.options[valutaSelector.selectedIndex].innerText
+                return kurser = 10
+            }
+            beregnKnap.addEventListener('click', valutaBeregner)
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
 }
 
-
-
-beregnKnap.addEventListener('click', valutaBeregner)
+fetchKurs()
