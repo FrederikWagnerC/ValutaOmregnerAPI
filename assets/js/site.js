@@ -15,44 +15,47 @@ const valutaSelector = document.getElementById('valutaSelector');
 const beregnKnap = document.getElementById('beregnKnap');
 const valutaOutput = document.getElementById('valutaOutput');
 const outputElement = document.getElementById('outputElement')
+let exchangeData
 
 let result
 const apiLink = 'https://v6.exchangerate-api.com/v6/' + apiKey + '/latest/DKK'
 
-function fetchKurs(currency) {
-    fetch(apiLink, currency)
+function fetchKurs() {
+    fetch(apiLink)
         .then(function (resp) {
             return resp.json()
         })
-        .then(function (data, currency) {
-            function valutaBeregner() {
-
-                let kurs
-                if (!kroneBeløb.value) {
-                    alert('Indtast et beløb!')
-                } else if (!valutaSelector.value) {
-                    alert('Vælg en valuta!')
-                }
-
-                if (valutaSelector.value === 'Euro') {
-                    kurs = data.conversion_rates.EUR
-                } else if (valutaSelector.value === 'Dollar') {
-                    kurs = data.conversion_rates.USD
-                } else if (valutaSelector.value === 'Pund') {
-                    kurs = data.conversion_rates.GBP
-                }
-
-
-                result = (kroneBeløb.value * kurs).toFixed(2)
-
-                valutaOutput.value = result + ' ' + valutaSelector.options[valutaSelector.selectedIndex].innerText
-                return kurser = 10
-            }
-            beregnKnap.addEventListener('click', valutaBeregner)
+        .then(function (data) {
+            exchangeData = data
         })
         .catch(function (error) {
             console.log(error)
         })
-}
+    }
+    
+    function valutaBeregner() {
 
-fetchKurs()
+        let kurs
+        if (!kroneBeløb.value) {
+            alert('Indtast et beløb!')
+        } else if (!valutaSelector.value) {
+            alert('Vælg en valuta!')
+        }
+
+        if (valutaSelector.value === 'Euro') {
+            kurs = exchangeData.conversion_rates.EUR
+        } else if (valutaSelector.value === 'Dollar') {
+            kurs = exchangeData.conversion_rates.USD
+        } else if (valutaSelector.value === 'Pund') {
+            kurs = exchangeData.conversion_rates.GBP
+        }
+
+
+        result = (kroneBeløb.value * kurs).toFixed(2)
+
+        valutaOutput.value = result + ' ' + valutaSelector.options[valutaSelector.selectedIndex].innerText
+        return kurser = 10
+    }
+    beregnKnap.addEventListener('click', valutaBeregner)
+    fetchKurs()
+    
